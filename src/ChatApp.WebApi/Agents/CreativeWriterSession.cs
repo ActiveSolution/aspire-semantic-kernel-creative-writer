@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ChatApp.WebApi.Agents;
 
-public class CreativeWriterSession(Kernel kernel, Azure.AI.Projects.AgentsClient agentsClient, AzureAIAgent researcherAgent, ChatCompletionAgent marketingAgent, ChatCompletionAgent writerAgent, ChatCompletionAgent editorAgent)
+public class CreativeWriterSession(Kernel kernel, Azure.AI.Projects.AgentsClient agentsClient, AzureAIAgent researcherAgent, AzureAIAgent marketingAgent, AzureAIAgent writerAgent, AzureAIAgent editorAgent)
 {
 
     internal async IAsyncEnumerable<AIChatCompletionDelta> ProcessStreamingRequest(CreateWriterRequest createWriterRequest)
@@ -32,7 +32,7 @@ public class CreativeWriterSession(Kernel kernel, Azure.AI.Projects.AgentsClient
         }
 
         StringBuilder sbProductResults = new();
-        await foreach (ChatMessageContent response in marketingAgent.InvokeAsync([], new() { { "product_context", createWriterRequest.Products } }))
+        await foreach (ChatMessageContent response in marketingAgent.InvokeAsync(thread.Id, new KernelArguments() { { "product_context", createWriterRequest.Products } }))
         {
             sbProductResults.AppendLine(response.Content);
             yield return new AIChatCompletionDelta(Delta: new AIChatMessageDelta
@@ -82,7 +82,8 @@ public class CreativeWriterSession(Kernel kernel, Azure.AI.Projects.AgentsClient
         }
     }
 
-    public async Task CleanupSessionAsync() {
+    public async Task CleanupSessionAsync()
+    {
         // delete all Agents from the session, otherwise they will not be deleted on the service/backend of Azure AI Agents Service
         await agentsClient.DeleteAgentAsync(researcherAgent.Id);
     }

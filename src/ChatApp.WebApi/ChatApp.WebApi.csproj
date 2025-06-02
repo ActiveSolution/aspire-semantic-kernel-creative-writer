@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <NoWarn>$(NoWarn);CA2007;IDE1006;SKEXP0001;SKEXP0110;SKEXP0050;OPENAI001;SKEXP0010</NoWarn>
+    <UserSecretsId>5400c364-d8b5-46ab-98a1-60f618640748</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Azure.AI.OpenAI" Version="9.0.0-preview.5.24551.3" />

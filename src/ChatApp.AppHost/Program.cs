@@ -5,7 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var azureDeployment = Environment.GetEnvironmentVariable("AzureDeployment") ?? "chatdeploymentnew";
+var azureDeployment = Environment.GetEnvironmentVariable("AzureDeployment") ?? "gpt-4o";
 var embeddingModelDeployment = Environment.GetEnvironmentVariable("EmbeddingModelDeployment") ?? "text-embedding-3-large";
 var azureEndpoint = Environment.GetEnvironmentVariable("AzureEndpoint");
 

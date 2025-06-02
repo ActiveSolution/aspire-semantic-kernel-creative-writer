@@ -54,6 +54,13 @@ public class CreativeWriterApp
         _vectorSearchKernel = defaultKernel.Clone();
         await ConfigureVectorSearchKernel(_vectorSearchKernel);
 
+        var existingAgents = await _agentsClient.GetAgentsAsync();
+        foreach (var agent in existingAgents.Value)
+        {
+            Console.WriteLine("Deleting: " + agent.Name);
+            await _agentsClient.DeleteAgentAsync(agent.Id);
+        }
+
         var bingConnection = await _aIProjectClient.GetConnectionsClient().GetConnectionAsync("bingGrounding");
         var connectionId = bingConnection.Value.Id;
 
@@ -85,28 +92,46 @@ public class CreativeWriterApp
             LoggerFactory = defaultKernel.LoggerFactory,
         };
 
-        ChatCompletionAgent marketingAgent = new(ReadFileForPromptTemplateConfig("./Agents/Prompts/marketing.yaml"), templateFactory: new KernelPromptTemplateFactory())
+        var mAgent = await _agentsClient.CreateAgentAsync(
+            model: configuration.GetValue<string>("ModelDeployment")!,
+            name: MarketingName,
+            description: "",
+            instructions: File.ReadAllText("./Agents/Prompts/marketing.yaml")
+        );
+
+        AzureAIAgent marketingAgent = new(mAgent, _agentsClient,
+                                           templateFactory: new KernelPromptTemplateFactory(),
+                                           templateFormat: PromptTemplateConfig.SemanticKernelTemplateFormat)
         {
             Name = MarketingName,
             Kernel = _vectorSearchKernel,
             Arguments = CreateFunctionChoiceAutoBehavior(),
-            LoggerFactory = _vectorSearchKernel.LoggerFactory
+            LoggerFactory = defaultKernel.LoggerFactory,
         };
 
-        ChatCompletionAgent writerAgent = new(ReadFileForPromptTemplateConfig("./Agents/Prompts/writer.yaml"), templateFactory: new KernelPromptTemplateFactory())
-        {
-            Name = WriterName,
-            Kernel = defaultKernel,
-            Arguments = [],
-            LoggerFactory = defaultKernel.LoggerFactory
-        };
+        var wAgent = await _agentsClient.CreateAgentAsync(
+            model: configuration.GetValue<string>("ModelDeployment")!,
+            name: WriterName,
+            description: "",
+            instructions: File.ReadAllText("./Agents/Prompts/writer.yaml")
+        );
 
-        ChatCompletionAgent editorAgent = new(ReadFileForPromptTemplateConfig("./Agents/Prompts/editor.yaml"), templateFactory: new KernelPromptTemplateFactory())
-        {
-            Name = EditorName,
-            Kernel = defaultKernel,
-            LoggerFactory = defaultKernel.LoggerFactory
-        };
+        AzureAIAgent writerAgent = new(wAgent, _agentsClient,
+                                           templateFactory: new KernelPromptTemplateFactory(),
+                                           templateFormat: PromptTemplateConfig.SemanticKernelTemplateFormat);
+
+
+        var eAgent = await _agentsClient.CreateAgentAsync(
+            model: configuration.GetValue<string>("ModelDeployment")!,
+            name: EditorName,
+            description: "",
+            instructions: File.ReadAllText("./Agents/Prompts/editor.yaml")
+        );
+
+        AzureAIAgent editorAgent = new(eAgent, _agentsClient,
+                                           templateFactory: new KernelPromptTemplateFactory(),
+                                           templateFormat: PromptTemplateConfig.SemanticKernelTemplateFormat);
+
 
         return new CreativeWriterSession(defaultKernel, _agentsClient, researcherAgent, marketingAgent, writerAgent, editorAgent);
     }
