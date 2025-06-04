@@ -42,7 +42,7 @@ var backend = builder.AddProject<Projects.ChatApp_WebApi>("backend")
     .WithEnvironment("AIProjectConnectionString", agentModelBingDeployment.GetOutput("aiProjectConnectionString"))
     .WithExternalHttpEndpoints();
 
-var frontend = builder.AddNpmApp("frontend", "../ChatApp.React")
+var frontend = builder.AddExecutable("frontend", "npm", "../ChatApp.React", "run", "dev")
     .WithReference(backend)
     .WithEnvironment("BROWSER", "none")
     .WithHttpEndpoint(env: "VITE_PORT")

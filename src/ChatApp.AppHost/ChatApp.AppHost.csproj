@@ -24,7 +24,7 @@
     <ProjectReference Include="..\ChatApp.WebApi\ChatApp.WebApi.csproj" />
   </ItemGroup>
 
-  <Target Name="RestoreNpm" BeforeTargets="Build" Condition=" '$(DesignTimeBuild)' != 'true' ">
+  <Target Name="RestoreNpm" BeforeTargets="Build" >
     <ItemGroup>
       <PackageJsons Include="..\*\package.json" />
     </ItemGroup>
