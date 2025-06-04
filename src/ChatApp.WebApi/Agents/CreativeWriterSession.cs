@@ -85,6 +85,6 @@ public class CreativeWriterSession(Kernel kernel, Azure.AI.Projects.AgentsClient
     public async Task CleanupSessionAsync()
     {
         // delete all Agents from the session, otherwise they will not be deleted on the service/backend of Azure AI Agents Service
-        await agentsClient.DeleteAgentAsync(researcherAgent.Id);
+        //await agentsClient.DeleteAgentAsync(researcherAgent.Id);
     }
 }
