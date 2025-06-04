@@ -20,7 +20,7 @@
   justify-content: flex-end;
 }
 
-.systemMessage, .assistantMessage {
+.systemMessage, .assistantMessage, .researcherMessage, .marketingMessage, .writerMessage, .editorMessage {
   display: flex;
   justify-content: flex-start;
 }
@@ -45,6 +45,26 @@
 .assistantMessage .messageBubble {
   background-color: #ece5dd;
   /* light gray */
+}
+
+.researcherMessage .messageBubble {
+  background-color: #e3f2fd;
+  /* light blue - for research/analytical work */
+}
+
+.marketingMessage .messageBubble {
+  background-color: #fff3e0;
+  /* light orange - for marketing/promotional content */
+}
+
+.writerMessage .messageBubble {
+  background-color: #f3e5f5;
+  /* light purple - for creative writing */
+}
+
+.editorMessage .messageBubble {
+  background-color: #e8f5e8;
+  /* light green - for editing/refinement */
 }
 
 .inputArea {

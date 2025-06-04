@@ -122,9 +122,30 @@ export default function Chat({ style }: { style: React.CSSProperties }) {
       return styles.systemMessage;
     }
 
-    return message.role === "user"
-      ? styles.userMessage
-      : styles.assistantMessage;
+    if (message.role === "user") {
+      return styles.userMessage;
+    }
+
+    // For assistant messages, check if there's an agent context to apply specific styling
+    if (message.role === "assistant") {
+      const agentMessage = message as AIAgentChatMessage;
+      const agentName = agentMessage.context?.name?.toLowerCase();
+      
+      switch (agentName) {
+        case "researcher":
+          return styles.researcherMessage;
+        case "marketing":
+          return styles.marketingMessage;
+        case "writer":
+          return styles.writerMessage;
+        case "editor":
+          return styles.editorMessage;
+        default:
+          return styles.assistantMessage;
+      }
+    }
+
+    return styles.assistantMessage;
   };
 
   const getErrorMessage = (message: AIChatError) => {
