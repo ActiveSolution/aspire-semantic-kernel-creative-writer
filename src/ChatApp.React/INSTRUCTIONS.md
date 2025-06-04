@@ -4,9 +4,6 @@ Enter into the chat what kind of article should be writte.
 To ensure that it is grounded on real public and also your internal product data, please provide additional context.
 
 ## Sample
-
-> Current limitation: Needs to be strict this format and with streaming enabled
-
 ``` yaml
 research: Can you find the camping trends in 2024 and what folks are doing in this winter?  
 products: Can you use a selection of tents and sleeping bags as context?  

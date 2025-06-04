@@ -113,17 +113,19 @@ export default function Chat({ style }: { style: React.CSSProperties }) {
     }
   };
 
-  const getClassName = (message: ChatEntry) => {
+  const getClassName = (message: ChatEntry, index: number) => {
+    const isAlternatePosition = index % 2 === 1; // Alternate every other message
+    
     if (isChatError(message)) {
       return styles.caution;
     }
 
     if (message.role === "system") {
-      return styles.systemMessage;
+      return `${styles.systemMessage} ${isAlternatePosition ? styles.rightAligned : ''}`;
     }
 
     if (message.role === "user") {
-      return styles.userMessage;
+      return `${styles.userMessage} ${styles.leftAligned}`;
     }
 
     // For assistant messages, check if there's an agent context to apply specific styling
@@ -131,21 +133,28 @@ export default function Chat({ style }: { style: React.CSSProperties }) {
       const agentMessage = message as AIAgentChatMessage;
       const agentName = agentMessage.context?.name?.toLowerCase();
       
+      let baseClass = '';
       switch (agentName) {
         case "researcher":
-          return styles.researcherMessage;
+          baseClass = styles.researcherMessage;
+          break;
         case "marketing":
-          return styles.marketingMessage;
+          baseClass = styles.marketingMessage;
+          break;
         case "writer":
-          return styles.writerMessage;
+          baseClass = styles.writerMessage;
+          break;
         case "editor":
-          return styles.editorMessage;
+          baseClass = styles.editorMessage;
+          break;
         default:
-          return styles.assistantMessage;
+          baseClass = styles.assistantMessage;
       }
+      
+      return `${baseClass} ${isAlternatePosition ? styles.rightAligned : ''}`;
     }
 
-    return styles.assistantMessage;
+    return `${styles.assistantMessage} ${isAlternatePosition ? styles.rightAligned : ''}`;
   };
 
   const getErrorMessage = (message: AIChatError) => {
@@ -155,8 +164,8 @@ export default function Chat({ style }: { style: React.CSSProperties }) {
   return (
     <div className={styles.chatWindow} style={style}>
       <div className={styles.messages}>
-        {messages.map((message) => (
-          <div key={crypto.randomUUID()} className={getClassName(message)}>
+        {messages.map((message, index) => (
+          <div key={crypto.randomUUID()} className={getClassName(message, index)}>
             {isChatError(message) ? (
               <>{getErrorMessage(message)}</>
             ) : (
